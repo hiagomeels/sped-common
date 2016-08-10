@@ -22,6 +22,22 @@ class Asn extends Base
      * @var integer
      */
     protected static $len = 0;
+
+    /**
+     * getCPFCert
+     *
+     * Obtêm o numero do CPF da chave publica do Certificado (A1)
+     *
+     * @param string $certpem conteúdo do certificado
+     * @return string CPF
+     */
+    public static function getCPFCert( $certPem )
+    {
+        $certDer = self::pem2Der((string) $certPem);
+        $data = self::getOIDdata((string) $certDer, '2.16.76.1.3.1');
+
+        return (string) $data[ 0 ][ 1 ][ 1 ][ 0 ][ 1 ];
+    }
     
     /**
      * getCNPJCert

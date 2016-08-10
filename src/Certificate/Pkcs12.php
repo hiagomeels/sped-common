@@ -94,10 +94,10 @@ class Pkcs12
     public $expireTimestamp = 0;
     
     /**
-     * CNPJ do certificado
+     * CPF OU CNPJ do certificado
      * @var string
      */
-    public $cnpjCert = '';
+    public $cpfCnpjCert = '';
     
     /**
      * Mensagem de erro da classe
@@ -272,9 +272,16 @@ class Pkcs12
         if (! $this->zValidCerts($x509certdata['cert'])) {
             throw new Exception\RuntimeException($this->error);
         }
-        $this->cnpjCert = Asn::getCNPJCert($x509certdata['cert']);
-        if (!$ignoreOwner) {
-            if (substr($this->cnpj, 0, 8) != substr($this->cnpjCert, 0, 8)) {
+        
+        if ( strlen($this->cpfCnpjCert) > 11 ) {
+            $this->cpfCnpjCert = substr(Asn::getCNPJCert($x509certdata[ 'cert' ]), 0, 8);   
+        }
+        else {   
+            $this->cpfCnpjCert = substr(Asn::getCPFCert($x509certdata[ 'cert' ]), 8, 8);
+        }
+    
+        if ( !$ignoreOwner ) {
+            if ( substr($this->cpfCnpjCert, 0, 8) != $this->cpfCnpjCert ) {
                 throw new Exception\InvalidArgumentException(
                     "O Certificado fornecido pertence a outro CNPJ!!"
                 );
@@ -337,9 +344,9 @@ class Pkcs12
      * Retorna o CNPJ do certificado
      * @return string
      */
-    public function getCNPJCert()
+    public function getCpfCnpjCert()
     {
-        return $this->cnpjCert;
+        return $this->cpfCnpjCert;
     }
     
     /**
