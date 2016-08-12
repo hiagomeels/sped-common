@@ -272,14 +272,9 @@ class Pkcs12
         if (! $this->zValidCerts($x509certdata['cert'])) {
             throw new Exception\RuntimeException($this->error);
         }
-        
-        if ( strlen($this->cpfCnpjCert) > 11 ) {
-            $this->cpfCnpjCert = substr(Asn::getCNPJCert($x509certdata[ 'cert' ]), 0, 8);   
-        }
-        else {   
-            $this->cpfCnpjCert = substr(Asn::getCPFCert($x509certdata[ 'cert' ]), 8, 8);
-        }
-    
+
+        $this->cpfCnpjCert = substr(Asn::getCPFCNPJCert($x509certdata[ 'cert' ]), 0, 8);
+
         if ( !$ignoreOwner ) {
             if ( substr($this->cpfCnpjCert, 0, 8) != $this->cpfCnpjCert ) {
                 throw new Exception\InvalidArgumentException(
