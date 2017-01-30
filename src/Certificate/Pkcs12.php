@@ -24,87 +24,87 @@ class Pkcs12
      * @var string
      */
     public $pathCerts = '';
-    
+
     /**
      * Path para o arquivo pfx (certificado digital em formato de transporte)
      * @var string
      */
     public $pfxFileName = '';
-    
+
     /**
      * Conteudo do arquivo pfx
      * @var string
      */
     public $pfxCert = '';
-    
+
     /**
      * Numero do CNPJ do emitente
      * @var string
      */
     public $cnpj = '';
-    
+
     /**
      * String que contêm a chave publica em formato PEM
      * @var string
      */
     public $pubKey = '';
-    
+
     /**
      * String quem contêm a chave privada em formato PEM
      * @var string
      */
     public $priKey = '';
-    
+
     /**
      * String que conten a combinação da chave publica e privada em formato PEM
      * e a cadeida completa de certificação caso exista
      * @var string
      */
     public $certKey = '';
-    
+
     /**
      * Flag para ignorar testes de validade do certificado
      * isso é usado apenas para fins de testes
      * @var boolean
      */
     public $ignoreValidCert = false;
-    
+
     /**
      * Path para a chave publica em arquivo
      * @var string
      */
     public $pubKeyFile = '';
-    
+
     /**
      * Path para a chave privada em arquivo
      * @var string
      */
     public $priKeyFile = '';
-    
+
     /**
      * Path para o certificado em arquivo
      * @var string
      */
     public $certKeyFile = '';
-    
+
     /**
      * Timestamp da data de validade do certificado
      * @var float
      */
     public $expireTimestamp = 0;
-    
+
     /**
      * CPF OU CNPJ do certificado
      * @var string
      */
     public $cpfCnpjCert = '';
-    
+
     /**
      * Mensagem de erro da classe
      * @var string
      */
     public $error = '';
-    
+
     /**
      * Id do documento sendo assinado
      * @var string
@@ -159,7 +159,7 @@ class Pkcs12
             throw new Exception\RuntimeException($this->error);
         }
     }
-    
+
     /**
      * zInit
      * Método de inicialização da classe irá verificar
@@ -272,14 +272,14 @@ class Pkcs12
         if (! $this->zValidCerts($x509certdata['cert'])) {
             throw new Exception\RuntimeException($this->error);
         }
-        
+
         if ( strlen($this->cpfCnpjCert) > 11 ) {
-            $this->cpfCnpjCert = substr(Asn::getCNPJCert($x509certdata[ 'cert' ]), 0, 8);   
+            $this->cpfCnpjCert = substr(Asn::getCNPJCert($x509certdata[ 'cert' ]), 0, 8);
         }
-        else {   
+        else {
             $this->cpfCnpjCert = substr(Asn::getCPFCert($x509certdata[ 'cert' ]), 8, 8);
         }
-    
+
         if ( !$ignoreOwner ) {
             if ( substr($this->cpfCnpjCert, 0, 8) != $this->cpfCnpjCert ) {
                 throw new Exception\InvalidArgumentException(
@@ -302,7 +302,7 @@ class Pkcs12
         $this->certKey=$x509certdata['pkey']."\r\n".$x509certdata['cert'];
         return true;
     }
-    
+
     /**
      * zSavePemFiles
      * @param array $x509certdata
@@ -330,7 +330,7 @@ class Pkcs12
         file_put_contents($this->pubKeyFile, $x509certdata['cert']);
         file_put_contents($this->certKeyFile, $x509certdata['pkey']."\r\n".$x509certdata['cert']);
     }
-    
+
     /**
      * Retorna o timestamp da validade do certificado
      * @return int
@@ -339,7 +339,7 @@ class Pkcs12
     {
         return $this->expireTimestamp;
     }
-    
+
     /**
      * Retorna o CNPJ do certificado
      * @return string
@@ -348,7 +348,7 @@ class Pkcs12
     {
         return $this->cpfCnpjCert;
     }
-    
+
     /**
      * aadChain
      * @param array $aCerts Array com os caminhos completos para cada certificado da cadeia
@@ -373,7 +373,7 @@ class Pkcs12
             file_put_contents($this->certKeyFile, $certificate);
         }
     }
-    
+
     /**
      * signXML
      * @param string $docxml
@@ -557,7 +557,7 @@ class Pkcs12
         //retorna o documento assinado
         return $xmlResp;
     }
-   
+
     /**
      * signatureExists
      * Check se o xml possi a tag Signature
@@ -572,7 +572,7 @@ class Pkcs12
         }
         return true;
     }
-    
+
     /**
      * verifySignature
      * Verifica a validade da assinatura digital contida no xml
@@ -602,7 +602,7 @@ class Pkcs12
         $flag = $this->zSignCheck($dom);
         return $flag;
     }
-    
+
     /**
      * zSignCheck
      * @param DOMDocument $dom
@@ -642,7 +642,7 @@ class Pkcs12
         }
         return true;
     }
-    
+
     /**
      * zDigCheck
      * @param DOMDocument $dom
@@ -685,7 +685,7 @@ class Pkcs12
         }
         return true;
     }
-    
+
     /**
      * zValidCerts
      * Verifica a data de validade do certificado digital
@@ -698,10 +698,10 @@ class Pkcs12
     protected function zValidCerts($pubKey)
     {
         if (! $data = openssl_x509_read($pubKey)) {
-                //o dado não é uma chave válida
-                $this->zRemovePemFiles();
-                $this->error = "A chave passada está corrompida ou não é uma chave. Obtenha s chaves corretas!!";
-                return false;
+            //o dado não é uma chave válida
+            $this->zRemovePemFiles();
+            $this->error = "A chave passada está corrompida ou não é uma chave. Obtenha s chaves corretas!!";
+            return false;
         }
         $certData = openssl_x509_parse($data);
         // reformata a data de validade;
@@ -722,7 +722,7 @@ class Pkcs12
         }
         return true;
     }
-    
+
     /**
      * zCleanPubKey
      * Remove a informação de inicio e fim do certificado
@@ -741,14 +741,14 @@ class Pkcs12
         foreach ($arCert as $curData) {
             //remove a tag de inicio e fim do certificado
             if (strncmp($curData, '-----BEGIN CERTIFICATE', 22) != 0 &&
-                    strncmp($curData, '-----END CERTIFICATE', 20) != 0 ) {
+                strncmp($curData, '-----END CERTIFICATE', 20) != 0 ) {
                 //carrega o resultado numa string
                 $data .= trim($curData);
             }
         }
         return $data;
     }
-    
+
     /**
      * zSplitLines
      * Divide a string do certificado publico em linhas
@@ -765,7 +765,7 @@ class Pkcs12
         }
         return $cnt;
     }
-    
+
     /**
      * zRemovePemFiles
      * Apaga os arquivos PEM do diretório
@@ -784,7 +784,7 @@ class Pkcs12
             unlink($this->certKeyFile);
         }
     }
-    
+
     /**
      * zGetOpenSSLError
      * @param string $msg
