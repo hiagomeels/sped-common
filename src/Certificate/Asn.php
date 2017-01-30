@@ -519,4 +519,14 @@ class Asn extends Base
             'bit string ('.self::$len.')',
             'UnsedBits:'.ord($bitstringData[0]).':'.ord($bitstringData[1]));
     }
+
+
+    public static function getCPFCNPJCert( $cert )
+    {
+        try {
+            return self::getCNPJCert($cert);
+        } catch ( \Exception $e ) {
+            return self::getCPFCert($cert);
+        }
+    }
 }
